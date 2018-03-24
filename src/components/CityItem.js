@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const CityItem = ({id, name}) => (
+const CityItem = ({id, name, handleDelete}) => (
   <div>
-    <Link to={`/cities/${id}`}>
       <li key={id}>
-        { name }
+        { name } &nbsp;&nbsp;
+        <Link to={`/cities/${id}`}>View</Link>
+        &nbsp;&nbsp; || &nbsp;&nbsp;
+        <a href="#" onClick={()=> handleDelete({id: id})}>Delete</a>
       </li>
-    </Link>
   </div>
 )
 
