@@ -19,7 +19,15 @@ class CityForm extends Component {
     e.preventDefault();
     const name = this.state.name;
     if (name.length !== 0){
-      this.props.addCity({ id: uuidv1(), name: this.state.name });
+      this.props.addCity({ 
+        id: uuidv1(), 
+        name: this.state.name,
+        temp: null,
+        description: null,
+        icon: null,
+        lat: null,
+        long: null
+      });
       this.setState({ name: '' });
     }
   }

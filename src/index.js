@@ -9,12 +9,14 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { loadState, saveState } from './localStorage';
 import { BrowserRouter } from 'react-router-dom';
+import logger from 'redux-logger'
+
 
 const persistedState = loadState();
 const store = createStore(
   rootReducer, 
   persistedState,
-  applyMiddleware(thunk)
+  applyMiddleware(thunk, logger)
 );
 
 store.subscribe(() => {

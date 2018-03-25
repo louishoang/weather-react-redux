@@ -1,4 +1,6 @@
 import * as Constants from '../constants' ;
+import { GeoLocation } from '../api/GeoLocationApi';
+import { WeatherApi } from '../api/WeatherApi';
 
 export const addCity = (city) => (
   {
@@ -11,6 +13,13 @@ export const deleteCity = (id) => (
   {
     type: Constants.DELETE_CITY,
     payload: id
+  }
+)
+
+export const updateCity = (city) => (
+  {
+    type: Constants.UPDATE_CITY,
+    payload: city
   }
 )
 
@@ -28,9 +37,45 @@ export const fetchWeatherFailed = (bool) => (
   }
 )
 
-export const fetchWeatherSucceeded = (data) => {
-  return({
-    type: Constants.FETCH_WEATHER_DETAILS_SUCCEEDED,
-    data
-  })
+export const fetchWeatherSucceeded = (data, city) => {
+  return dispatch => {
+    const weather = {
+      temp: data.main.temp,
+      description: data.weather[0].description,
+      icon: data.weather[0].icon
+    }
+    const cityData = Object.assign({}, city, weather)
+    dispatch(updateCity(cityData))
+  }
+}
+
+export function getLongLat(city) {
+  return dispatch => {
+    GeoLocation.getLongLat(city).then(
+      response => dispatch(fetchLocationSucceeded(response.data, city))
+    )
+  }
+}
+
+export const fetchLocationSucceeded = (data, city) => {
+  return dispatch => {
+    const locationDetails = data.results[0].geometry.location
+    const cityData = Object.assign(
+        {},
+        city, 
+        { lat: locationDetails.lat, long: locationDetails.lng}
+      )
+  
+    dispatch(getWeather(cityData))
+  }
+}
+
+export function getWeather(city) {
+  return dispatch => {
+    dispatch(fetchingWeather(true))
+    WeatherApi.getWeather(city).then(
+      response => dispatch(fetchWeatherSucceeded(response.data, city)),
+      dispatch(fetchingWeather(false))
+    )
+  }
 }

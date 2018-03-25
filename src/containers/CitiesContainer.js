@@ -5,7 +5,6 @@ import CityForm from './CityForm';
 import { deleteCity } from '../actions';
 
 class CitiesContainer extends Component{
-
   render() {
     const { cities } = this.props
     return(

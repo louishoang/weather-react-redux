@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchWeatherSucceeded } from '../actions';
 import { Link } from 'react-router-dom';
-
-const URL = 'https://fcc-weather-api.glitch.me/api/current?lat=35&lon=139';
+import { getLongLat } from '../actions';
 
 class CityContainer extends Component{
   constructor({city}){
@@ -11,22 +9,18 @@ class CityContainer extends Component{
     this.state = {
       id: city.id,
       name: city.name,
-      temp: null,
-      description: '',
-      icon: ''
+      temp: city.temp,
+      description: city.description,
+      icon: city.icon,
+      lat: city.lat,
+      long: city.long
     }
   }
 
   componentDidMount(){
-    fetch(URL).then((response) => response.json()).then(data => {
-      this.setState(
-        {
-          temp: data.main.temp, 
-          description: data.weather[0].description,
-          icon: data.weather[0].icon
-        }
-      );
-    })
+    if (this.state.lat === null){
+      this.props.getLongLat(this.state)
+    }
   }
 
   render(){
@@ -40,7 +34,7 @@ class CityContainer extends Component{
         Today's weather in {name} 
         <p>Temperature: {temp}&#176;F</p>
         <p>Description: {description}</p>
-        <img width="100" height="100" src={icon}/>
+        <img width="100" height="100" src={icon} alt="weather"/>
       </div>
     )
   }
@@ -55,8 +49,8 @@ const mapStatetoProps = (state, ownProps) => {
 
 const mapDispatchtoProps = dispatch => {
   return {
-    fetchWeatherSucceeded: data => dispatch(fetchWeatherSucceeded(data))
+    getLongLat: city => dispatch(getLongLat(city))
   }
 }
 
-export default connect(mapStatetoProps)(CityContainer);
+export default connect(mapStatetoProps, mapDispatchtoProps)(CityContainer);
